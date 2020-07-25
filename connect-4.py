@@ -4,8 +4,10 @@ import numpy as np
 
 '''
 Notes
-implement minimax
-implement alpha beta pruning
+exceeding maximum recursion depth
+    add a depth variable
+    add evaluate function that factors in how close the cpu is to winning
+    find way to evaluate the best moves first
 '''
 
 def main():
@@ -115,13 +117,15 @@ def playermove():
 
 def cpumove():
     global board
+    alpha = -99999
+    beta = 99999
     print("cpu move")
     bestscore = -9999
     for i in range(6):
         for j in range(7):
             if checkspace(i, j) == True:
                 board[i][j] = cpu
-                score = minimax(board, False)
+                score = minimax(board, alpha, beta, False)
                 board[i][j] = "[ ]" #rever the baord back to normal
                 if score > bestscore:
                     bestscore = score
@@ -129,11 +133,11 @@ def cpumove():
                     column = j
     board[row][column] = cpu
 
-def minimax(position, maximize):
+def minimax(position, alpha, beta, maximize):
     if checkwin() == cpu:
-        return 1
+        return 4
     elif checkwin() == player:
-        return -1
+        return -4
     elif checktie() == True:
         return 0
     if maximize == True: #if cpu turn
@@ -142,9 +146,12 @@ def minimax(position, maximize):
             for j in range(7):
                 if checkspace(i, j) == True:
                     board[i][j] = cpu
-                    score = minimax(position, False) #call minimax on open space
+                    score = minimax(position, alpha, beta, False) #call minimax on open space
                     position[i][j] = "[ ]" #not sure if i need to do this
                     maxscore = max(maxscore, score) #find the maxevaluation
+                    alpha = max(alpha, maxscore) #pruning
+                    if beta <= alpha:
+                        return alpha
         return maxscore
 
     else: #if players turn
@@ -153,9 +160,12 @@ def minimax(position, maximize):
             for j in range(7):
                 if checkspace(i, j) == True:
                     board[i][j] = player
-                    score = minimax(position, True) #call minimax on open space
+                    score = minimax(position, alpha, beta, True) #call minimax on open space
                     position[i] = "[ ]"
                     minscore = min(minscore, score) #set minscore to smallest score
+                    beta = min(beta, minscore) #pruning
+                    if beta <= alpha:
+                        return beta
         return minscore
 
 
