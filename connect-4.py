@@ -173,7 +173,7 @@ def func_eval():
     eval = 0 #eval is based on how close the position is to winning ex 3 in a row gives 2 points
     '''
     #eval the position for cpu
-    I'm not sure how much this helps or if it does.
+    #I'm not sure how much this helps or if it does.
     for i in range(6):
         for j in range(4):
             if board[i][j] == cpu: 
