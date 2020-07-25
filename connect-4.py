@@ -4,7 +4,7 @@ import numpy as np
 
 '''
 Notes
-implement cpu move and minimax
+implement minimax
 implement alpha beta pruning
 '''
 
@@ -38,7 +38,7 @@ def main():
     while True:
         print(board)
         cpumove()
-        if checkwin() == True:
+        if checkwin() != False:
             print(board)
             print("CPU Wins")
             break
@@ -48,7 +48,7 @@ def main():
             break
         print(board)
         playermove()
-        if checkwin() == True:
+        if checkwin() != False:
             print(board)
             print("You Win")
             break
@@ -62,22 +62,22 @@ def checkwin():
     for i in range(6):
         for j in range(4):
             if board[i][j] != "[ ]" and board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i][j + 3]:
-                return True
+                return board[i][j]
     #vertical
     for i in range(3):
         for j in range(7):
             if board[i][j] != "[ ]" and board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 3][j]:
-                return True
+                return board[i][j]
     #right diagonals
     for i in range(3):
         for j in range(4):
             if board[i][j] != "[ ]" and board[i][j] == board[i + 1][j + 1] == board[i + 2][j + 2] == board[i + 3][j + 3]:
-                return True
+                return board[i][j]
     #left diagonals
     for i in range(3):
         for j in range(3, 7):
             if board[i][j] != "[ ]" and board[i][j] == board[i + 1][j - 1] == board[i + 2][j - 2] == board[i + 3][j - 3]:
-                return True
+                return board[i][j]
 
     return False
 
@@ -114,10 +114,50 @@ def playermove():
         playermove()
 
 def cpumove():
+    global board
     print("cpu move")
+    bestscore = -9999
+    for i in range(6):
+        for j in range(7):
+            if checkspace(i, j) == True:
+                board[i][j] = cpu
+                score = minimax(board, False)
+                board[i][j] = "[ ]" #rever the baord back to normal
+                if score > bestscore:
+                    bestscore = score
+                    row = i
+                    column = j
+    board[row][column] = cpu
 
-def minimax():
-    print("minimax function")
+def minimax(position, maximize):
+    if checkwin() == cpu:
+        return 1
+    elif checkwin() == player:
+        return -1
+    elif checktie() == True:
+        return 0
+    if maximize == True: #if cpu turn
+        maxscore = -9999
+        for i in range(6): #find all open spaces
+            for j in range(7):
+                if checkspace(i, j) == True:
+                    board[i][j] = cpu
+                    score = minimax(position, False) #call minimax on open space
+                    position[i][j] = "[ ]" #not sure if i need to do this
+                    maxscore = max(maxscore, score) #find the maxevaluation
+        return maxscore
+
+    else: #if players turn
+        minscore = 9999
+        for i in range(6): #find all open spaces
+            for j in range(7):
+                if checkspace(i, j) == True:
+                    board[i][j] = player
+                    score = minimax(position, True) #call minimax on open space
+                    position[i] = "[ ]"
+                    minscore = min(minscore, score) #set minscore to smallest score
+        return minscore
+
 
 
 
