@@ -3,6 +3,7 @@
 #minimax and alpha-beta pruning implemented to play connect 4 and always win.
 import numpy as np
 
+
 def main():
     print("Connect 4!")
     global board
@@ -133,7 +134,7 @@ def minimax(depth, alpha, beta, maximize):
     global board
     depth = depth - 1
     if checkwin() == cpu:
-            return 4
+        return 4
     elif checkwin() == player:
         return -4
     elif checktie() == True:
@@ -171,9 +172,8 @@ def minimax(depth, alpha, beta, maximize):
 
 def func_eval():
     eval = 0 #eval is based on how close the position is to winning ex 3 in a row gives 2 points
-    '''
+    
     #eval the position for cpu
-    #I'm not sure how much this helps or if it does.
     for i in range(6):
         for j in range(4):
             if board[i][j] == cpu: 
@@ -205,7 +205,7 @@ def func_eval():
                     eval = eval + 1
                     if board[i + 1][j - 1] == board[i + 2][j - 2]:
                         eval = eval + 1
-    '''
+    
     #penalize the position for how many pieces the player has in a row
     for i in range(6):
         for j in range(4):
